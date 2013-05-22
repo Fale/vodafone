@@ -78,3 +78,25 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+// Check mysql query count
+Event::listen('illuminate.query', function($query, $bindings, $time)
+{
+    static $count;
+    if(App::make('env') === 'local')
+    {
+        $logFile = __DIR__.'/storage/logs/queries';
+        ob_start();
+        $str = ob_get_clean();
+        if($count === null)
+        {
+            File::put($logFile, '');
+            $count = 1;
+        }
+        $msg = $count++ . '---------------------------------------'.PHP_EOL;
+        $msg .= $query;
+        $msg .= $str.PHP_EOL;
+        $msg .= '--------------------------------------------------------------'.PHP_EOL.PHP_EOL;
+        File::append($logFile, $msg);
+    }
+});
