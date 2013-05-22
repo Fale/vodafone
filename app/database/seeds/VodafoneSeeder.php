@@ -13,6 +13,7 @@ class VodafoneSeeder extends Seeder {
         foreach ($files as $file) {
             $handle = fopen($file, 'r');
 
+            $datas = Array();
             $l = 0;
             while (($data = fgetcsv($handle, 5000, ",")) !== FALSE) {
                 $l ++;
@@ -27,6 +28,7 @@ class VodafoneSeeder extends Seeder {
 
             foreach ($datas as $data)
                 DB::table('vodafone')->insert($data);
+
         }
     }
 
